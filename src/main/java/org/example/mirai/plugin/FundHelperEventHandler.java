@@ -1,7 +1,5 @@
 package org.example.mirai.plugin;
 
-import cn.hutool.json.JSONArray;
-import cn.hutool.json.JSONObject;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.ListeningStatus;
 import net.mamoe.mirai.event.SimpleListenerHost;
@@ -9,9 +7,8 @@ import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.GroupTempMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
-import org.example.mirai.plugin.netword.FundCrawler;
 
-import java.util.*;
+import java.lang.reflect.Method;
 
 public class FundHelperEventHandler extends SimpleListenerHost {
     /**
@@ -50,43 +47,26 @@ public class FundHelperEventHandler extends SimpleListenerHost {
     }
 
     private void replyFundSeach(String input, MessageEvent messageEvent) {
-        input = input.toLowerCase().replaceAll("。", ".");
+        input = input.toLowerCase().replace("。", ".");
         if(!input.startsWith(".今日板块") && !input.startsWith(".基金 "))
             return;
         try{
-            FundCrawler fundCrawler = FundCrawler.getInstance();
-            if (input.startsWith(".今日板块")) {
-                JSONObject industry = fundCrawler.getIndustry();
-                JSONArray data = industry.getJSONArray("data");
-                System.out.println(data);
-                List<JSONObject> arrayLists = data.toList(JSONObject.class);
-                //排序
-                arrayLists.sort(Comparator.comparingDouble(x -> x.getDouble("changePercent")));
-                StringBuilder sb = new StringBuilder();
-                sb.append("领涨行业：").append("\n");
-                sb.append(arrayLists.get(arrayLists.size() - 1).getStr("name")).append(":").append(arrayLists.get(arrayLists.size() - 1).getStr("changePercent")).append("\n");
-                sb.append(arrayLists.get(arrayLists.size() - 2).getStr("name")).append(":").append(arrayLists.get(arrayLists.size() - 2).getStr("changePercent")).append("\n");
-                sb.append(arrayLists.get(arrayLists.size() - 3).getStr("name")).append(":").append(arrayLists.get(arrayLists.size() - 3).getStr("changePercent"));
-
-                sb.append("领跌行业：").append("\n");
-
-                sb.append(arrayLists.get(0).getStr("name")).append(":").append(arrayLists.get(0).getStr("changePercent")).append("\n");
-                sb.append(arrayLists.get(1).getStr("name")).append(":").append(arrayLists.get(1).getStr("changePercent")).append("\n");
-                sb.append(arrayLists.get(2).getStr("name")).append(":").append(arrayLists.get(2).getStr("changePercent")).append("\n");
-                messageEvent.getSubject().sendMessage(sb.toString());
-            } else {
-                String code = input.replace(".基金 ", "");
-                JSONObject fund = fundCrawler.getFund(code).getJSONArray("data").toList(JSONObject.class).get(0);
-                StringBuilder sb = new StringBuilder();
-                sb.append("基金编号: ").append(code).append("\n");
-                sb.append("基金名称: ").append(fund.getStr("name")).append("\n");
-                sb.append("今日涨跌: ").append(fund.getStr("dayGrowth")).append("\n");
-                sb.append("半年涨跌: ").append(fund.getStr("lastSixMonthsGrowth")).append("\n");
-                messageEvent.getSubject().sendMessage(sb.toString());
+            String[] inputs = input.split(" ");
+            Method m = JavaPluginMain.mapUrlMethod.get(inputs[0]);  //通过注解得到对应的方法
+            if (null == m){
+                JavaPluginMain.INSTANCE.getLogger().error("找不到对应的command");
+                throw new RuntimeException();
             }
-
+            String result;
+            if (1 == inputs.length)
+                result = m.invoke(m.getDeclaringClass().newInstance()).toString();
+            else if (2 == inputs.length)
+                result = m.invoke(m.getDeclaringClass().newInstance(), inputs[1]).toString();
+            else
+                result = "指令有误";
+            messageEvent.getSubject().sendMessage(result);
         } catch (Exception e){
-            e.printStackTrace();
+            JavaPluginMain.INSTANCE.getLogger().error(e.getMessage());
             messageEvent.getSubject().sendMessage("错误");
         }
     }
