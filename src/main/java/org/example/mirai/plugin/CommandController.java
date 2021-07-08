@@ -37,7 +37,7 @@ public class CommandController {
         return sb.toString();
     }
 
-    @UserCommand(".基金 ")
+    @UserCommand(".基金")
     public String fund(String code){
         JSONObject fund = fundCrawler.getFund(code).getJSONArray("data").toList(JSONObject.class).get(0);
         StringBuilder sb = new StringBuilder();
