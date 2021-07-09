@@ -9,8 +9,16 @@ import net.mamoe.mirai.event.events.GroupTempMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.lang.reflect.Method;
+import java.util.Set;
 
 public class FundHelperEventHandler extends SimpleListenerHost {
+
+    private final Set<String> commands;
+
+    public FundHelperEventHandler() {
+        this.commands = JavaPluginMain.mapUrlMethod.keySet();
+    }
+
     /**
      * 监听群临时会话消息
      *
@@ -47,21 +55,26 @@ public class FundHelperEventHandler extends SimpleListenerHost {
     }
 
     private void replyFundSeach(String input, MessageEvent messageEvent) {
-        input = input.toLowerCase().replace("。", ".");
-        if(!input.startsWith(".今日板块") && !input.startsWith(".基金 "))
+        if (!input.startsWith(".") && !input.startsWith("。"))
+            return;
+        input = input.replace("。", ".");
+        if(!isCommand(input))
             return;
         try{
             String[] inputs = input.split(" ");
-            Method m = JavaPluginMain.mapUrlMethod.get(inputs[0]);  //通过注解得到对应的方法
-            if (null == m){
+            Method method = JavaPluginMain.mapUrlMethod.get(inputs[0]);  //通过注解得到对应的方法
+            if (null == method){
                 JavaPluginMain.INSTANCE.getLogger().error("找不到对应的command");
                 throw new RuntimeException();
             }
             String result;
-            if (1 == inputs.length)
-                result = m.invoke(m.getDeclaringClass().newInstance()).toString();
-            else if (2 == inputs.length)
-                result = m.invoke(m.getDeclaringClass().newInstance(), inputs[1]).toString();
+            int parameterLength = method.getParameterTypes().length;
+            if (0 == parameterLength)
+                result = method.invoke(method.getDeclaringClass().newInstance()).toString();
+            else if (1 == parameterLength)
+                result = method.invoke(method.getDeclaringClass().newInstance(), inputs[1]).toString();
+            else if (2 == parameterLength)
+                result = method.invoke(method.getDeclaringClass().newInstance(), inputs[1], messageEvent.getSender().getId()).toString();
             else
                 result = "指令有误";
             messageEvent.getSubject().sendMessage(result);
@@ -69,6 +82,12 @@ public class FundHelperEventHandler extends SimpleListenerHost {
             JavaPluginMain.INSTANCE.getLogger().error(e.getMessage());
             messageEvent.getSubject().sendMessage("错误");
         }
+    }
+
+    private boolean isCommand(String str){
+        return commands
+                .stream()
+                .anyMatch(str::startsWith);
     }
 
 

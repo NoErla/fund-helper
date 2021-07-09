@@ -43,9 +43,47 @@ public class CommandController {
         StringBuilder sb = new StringBuilder();
         sb.append("基金编号: ").append(code).append("\n");
         sb.append("基金名称: ").append(fund.getStr("name")).append("\n");
-        sb.append("今日涨跌: ").append(fund.getStr("dayGrowth")).append("\n");
+        sb.append("今日预估: ").append(fund.getStr("expectGrowth")).append("\n");
+        sb.append("本周涨跌: ").append(fund.getStr("lastWeekGrowth")).append("\n");
+        sb.append("本月涨跌: ").append(fund.getStr("lastMonthGrowth")).append("\n");
+        sb.append("三月涨跌: ").append(fund.getStr("lastThreeMonthsGrowth")).append("\n");
         sb.append("半年涨跌: ").append(fund.getStr("lastSixMonthsGrowth")).append("\n");
         sb.append("一年涨跌: ").append(fund.getStr("lastYearGrowth"));
         return sb.toString();
+    }
+
+    @UserCommand(".我的基金")
+    public String fund(){
+        String[] codes = {"002168", "481010", "001195", "002669"};
+        List<JSONObject> funds = fundCrawler.getFunds(codes).getJSONArray("data").toList(JSONObject.class);
+        StringBuilder sb = new StringBuilder();
+        for (JSONObject fund : funds){
+            sb.append(fund.getStr("name")).append(": ").append(fund.getStr("expectGrowth")).append("\n");
+        }
+        return sb.toString();
+    }
+
+    @UserCommand(".添加自选")
+    public String insertFund(String codes, long id){
+//        String path = "../data/data.json";
+//        FileReader fileReader = new FileReader(path);
+//        String s = fileReader.readString();
+//        List<User> users = JSONUtil.parseArray(s).toList(User.class);
+//        //如果无此用户则创建
+//        if (CollUtil.isEmpty(users) || users.stream().noneMatch(user -> id == user.getId())){
+//            User user = new User();
+//            user.setId(id);
+//            user.setFundList(Arrays.stream(codes.split(",")).collect(Collectors.toList()));
+//            String result = JSONUtil.toJsonStr(user);
+//            FileWriter writer = new FileWriter(path);
+//            writer.write(result);
+//        }
+
+        return "开发中";
+    }
+
+    @UserCommand(".删除自选")
+    public String deleteFund(String code, long id){
+        return "开发中";
     }
 }
