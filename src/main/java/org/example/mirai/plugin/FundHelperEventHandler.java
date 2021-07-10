@@ -1,5 +1,9 @@
 package org.example.mirai.plugin;
 
+import com.thoughtworks.paranamer.AnnotationParanamer;
+import com.thoughtworks.paranamer.BytecodeReadingParanamer;
+import com.thoughtworks.paranamer.CachingParanamer;
+import com.thoughtworks.paranamer.Paranamer;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.ListeningStatus;
 import net.mamoe.mirai.event.SimpleListenerHost;
@@ -58,6 +62,7 @@ public class FundHelperEventHandler extends SimpleListenerHost {
         if (!input.startsWith(".") && !input.startsWith("。"))
             return;
         input = input.replace("。", ".");
+        input = input.replace("，", ",");
         if(!isCommand(input))
             return;
         try{
@@ -68,17 +73,23 @@ public class FundHelperEventHandler extends SimpleListenerHost {
                 throw new RuntimeException();
             }
             String result;
-            int parameterLength = method.getParameterTypes().length;
+            Paranamer info = new CachingParanamer(new AnnotationParanamer(new BytecodeReadingParanamer()));
+            String[] parameterNames = info.lookupParameterNames(method);
+            for (String parameterName : parameterNames){
+
+            }
+            int parameterLength = method.getParameterCount();
             if (0 == parameterLength)
-                result = method.invoke(method.getDeclaringClass().newInstance()).toString();
+                result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance()).toString();
             else if (1 == parameterLength)
-                result = method.invoke(method.getDeclaringClass().newInstance(), inputs[1]).toString();
+                result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), inputs[1]).toString();
             else if (2 == parameterLength)
-                result = method.invoke(method.getDeclaringClass().newInstance(), inputs[1], messageEvent.getSender().getId()).toString();
+                result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), inputs[1], String.valueOf(messageEvent.getSender().getId())).toString();
             else
                 result = "指令有误";
             messageEvent.getSubject().sendMessage(result);
         } catch (Exception e){
+            e.printStackTrace();
             JavaPluginMain.INSTANCE.getLogger().error(e.getMessage());
             messageEvent.getSubject().sendMessage("错误");
         }

@@ -3,10 +3,15 @@ package org.example.mirai.plugin;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import org.example.mirai.plugin.annotation.UserCommand;
+import org.example.mirai.plugin.dao.FundDao;
 import org.example.mirai.plugin.netword.FundCrawler;
+import org.example.mirai.plugin.pojo.User;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author Mu Yuchen
@@ -16,8 +21,10 @@ public class CommandController {
 
     private FundCrawler fundCrawler = FundCrawler.getInstance();
 
+    private FundDao fundDao = FundDao.getInstance();
+
     @UserCommand(".今日板块")
-    public String today(){
+    public String dailyIndustry(){
         JSONObject industry = fundCrawler.getIndustry();
         JSONArray data = industry.getJSONArray("data");
         List<JSONObject> arrayLists = data.toList(JSONObject.class);
@@ -53,10 +60,12 @@ public class CommandController {
     }
 
     @UserCommand(".我的基金")
-    public String fund(){
-        String[] codes = {"002168", "481010", "001195", "002669"};
-        List<JSONObject> funds = fundCrawler.getFunds(codes).getJSONArray("data").toList(JSONObject.class);
+    public String myFund(String id){
+        Optional<User> query = fundDao.query(id);
+        //如果用户为空则抛出异常
+        User user = query.orElseThrow(RuntimeException::new);
         StringBuilder sb = new StringBuilder();
+        List<JSONObject> funds = fundCrawler.getFunds(user.getFundList().toArray(new String[0])).getJSONArray("data").toList(JSONObject.class);
         for (JSONObject fund : funds){
             sb.append(fund.getStr("name")).append(": ").append(fund.getStr("expectGrowth")).append("\n");
         }
@@ -64,22 +73,13 @@ public class CommandController {
     }
 
     @UserCommand(".添加自选")
-    public String insertFund(String codes, long id){
-//        String path = "../data/data.json";
-//        FileReader fileReader = new FileReader(path);
-//        String s = fileReader.readString();
-//        List<User> users = JSONUtil.parseArray(s).toList(User.class);
-//        //如果无此用户则创建
-//        if (CollUtil.isEmpty(users) || users.stream().noneMatch(user -> id == user.getId())){
-//            User user = new User();
-//            user.setId(id);
-//            user.setFundList(Arrays.stream(codes.split(",")).collect(Collectors.toList()));
-//            String result = JSONUtil.toJsonStr(user);
-//            FileWriter writer = new FileWriter(path);
-//            writer.write(result);
-//        }
-
-        return "开发中";
+    public String insertFund(String codes, String id){
+        List<String> fundList = Arrays.stream(codes.split(",")).collect(Collectors.toList());
+        User user = new User();
+        user.setId(id);
+        user.setFundList(fundList);
+        fundDao.add(user);
+        return "添加成功";
     }
 
     @UserCommand(".删除自选")
