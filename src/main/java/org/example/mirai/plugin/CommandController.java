@@ -2,7 +2,7 @@ package org.example.mirai.plugin;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
-import org.example.mirai.plugin.annotation.UserCommand;
+import org.example.mirai.plugin.annotation.MiraiCommand;
 import org.example.mirai.plugin.dao.FundDao;
 import org.example.mirai.plugin.netword.FundCrawler;
 import org.example.mirai.plugin.pojo.User;
@@ -32,7 +32,7 @@ public class CommandController {
         return instance;
     }
 
-    @UserCommand(".今日板块")
+    @MiraiCommand(".今日板块")
     public String dailyIndustry(){
         JSONObject industry = fundCrawler.getIndustry();
         JSONArray data = industry.getJSONArray("data");
@@ -53,7 +53,7 @@ public class CommandController {
         return sb.toString();
     }
 
-    @UserCommand(".基金")
+    @MiraiCommand(".基金")
     public String fund(String code){
         JSONObject fund = fundCrawler.getFund(code).getJSONArray("data").toList(JSONObject.class).get(0);
         StringBuilder sb = new StringBuilder();
@@ -68,7 +68,7 @@ public class CommandController {
         return sb.toString();
     }
 
-    @UserCommand(".我的基金")
+    @MiraiCommand(".我的基金")
     public String myFund(String id){
         Optional<User> query = fundDao.query(id);
         //如果用户为空则抛出异常
@@ -81,7 +81,7 @@ public class CommandController {
         return sb.toString();
     }
 
-    @UserCommand(".添加自选")
+    @MiraiCommand(".添加自选")
     public String insertFund(String code, String id){
         List<String> fundList = Arrays.stream(code.split(",")).collect(Collectors.toList());
         Optional<User> query = fundDao.query(id);
@@ -89,7 +89,7 @@ public class CommandController {
         if (query.isPresent()){
             User user = query.get();
             user.setFundList(fundList);
-            fundDao.update(query.get());
+            fundDao.update(user);
         } else {
             //如果用户为空则添加记录
             User user = new User();
@@ -100,7 +100,7 @@ public class CommandController {
         return "添加成功";
     }
 
-    @UserCommand(".删除自选")
+    @MiraiCommand(".删除自选")
     public String deleteFund(String code, String id){
         return "开发中";
     }

@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public class FundDao {
 
-    private static String path = "resources/data.csv";
+    private static final String path = "resources/data.csv";
 
     private static final FundDao instance = new FundDao();
 
@@ -30,10 +30,10 @@ public class FundDao {
         CsvWriter writer = CsvUtil.getWriter(path, CharsetUtil.CHARSET_UTF_8, true);
         writer.writeLine(user.getId(), user.getFundList().toString());
         writer.flush();
-        //writer.writeBeans(users);
     }
 
     public Optional<User> query(String id){
+        //ResourceUtil.getUtf8Reader在centos下无法获得classpath，因为使用了classloader.getResource
         CsvReader reader = CsvUtil.getReader();
         List<User> users = reader.read(ResourceUtil.getUtf8Reader(FileUtil.file(path).getAbsolutePath()), User.class);
         return users.stream().filter(user -> user.getId().equals(id)).findFirst();
@@ -41,7 +41,7 @@ public class FundDao {
 
     public void update(User user){
         CsvReader reader = CsvUtil.getReader();
-        List<User> users = reader.read(ResourceUtil.getUtf8Reader(path), User.class);
+        List<User> users = reader.read(ResourceUtil.getUtf8Reader(FileUtil.file(path).getAbsolutePath()), User.class);
         Optional<User> first = users.stream().filter(u -> u.getId().equals(user.getId())).findFirst();
         first.ifPresent(f-> f.setFundList(user.getFundList()));
         CsvWriter writer = CsvUtil.getWriter(path, CharsetUtil.CHARSET_UTF_8,false);
