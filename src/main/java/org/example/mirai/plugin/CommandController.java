@@ -25,8 +25,7 @@ public class CommandController {
 
     private static final CommandController instance = new CommandController();
 
-    //TODO 更改为private 但是要注意反射
-    public CommandController(){}
+    private CommandController(){}
 
     public static CommandController getInstance(){
         return instance;

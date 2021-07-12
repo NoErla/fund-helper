@@ -73,11 +73,13 @@ public class FundHelperEventHandler extends SimpleListenerHost {
             Method method = JavaPluginMain.mapUrlMethod.get(inputs[0]);  //通过注解得到对应的方法
             if (null == method)
                 return;
+            Class<?> clazz = method.getDeclaringClass();
+            Method getInstance = clazz.getMethod("getInstance");
             //获得方法参数
             //TODO 目前只有String类型的入参，之后可以改为支持其他类型
-            String[] parameters = dataBinder(method, String.valueOf(messageEvent.getSender().getId()), inputs[1]);
+            String[] parameters = dataBinder(method, String.valueOf(messageEvent.getSender().getId()), inputs.length>=2 ? inputs[1] : null);
             //反射执行方法
-            String result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), (Object[]) parameters).toString();
+            String result = method.invoke(getInstance.invoke(clazz), (Object[]) parameters).toString();
             messageEvent.getSubject().sendMessage(result);
         } catch (Exception e){
             logger.error(e.getMessage());
