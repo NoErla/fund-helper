@@ -23,6 +23,15 @@ public class CommandController {
 
     private FundDao fundDao = FundDao.getInstance();
 
+    private static final CommandController instance = new CommandController();
+
+    //TODO 更改为private 但是要注意反射
+    public CommandController(){}
+
+    public static CommandController getInstance(){
+        return instance;
+    }
+
     @UserCommand(".今日板块")
     public String dailyIndustry(){
         JSONObject industry = fundCrawler.getIndustry();
@@ -73,17 +82,26 @@ public class CommandController {
     }
 
     @UserCommand(".添加自选")
-    public String insertFund(String codes, String id){
-        List<String> fundList = Arrays.stream(codes.split(",")).collect(Collectors.toList());
-        User user = new User();
-        user.setId(id);
-        user.setFundList(fundList);
-        fundDao.add(user);
+    public String insertFund(String code, String id){
+        List<String> fundList = Arrays.stream(code.split(",")).collect(Collectors.toList());
+        Optional<User> query = fundDao.query(id);
+        //如果存在用户则修改
+        if (query.isPresent()){
+            User user = query.get();
+            user.setFundList(fundList);
+            fundDao.update(query.get());
+        } else {
+            //如果用户为空则添加记录
+            User user = new User();
+            user.setId(id);
+            user.setFundList(fundList);
+            fundDao.add(user);
+        }
         return "添加成功";
     }
 
     @UserCommand(".删除自选")
-    public String deleteFund(String code, long id){
+    public String deleteFund(String code, String id){
         return "开发中";
     }
 }

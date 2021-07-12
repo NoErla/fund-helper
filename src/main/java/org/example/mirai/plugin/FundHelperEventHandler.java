@@ -72,21 +72,18 @@ public class FundHelperEventHandler extends SimpleListenerHost {
                 JavaPluginMain.INSTANCE.getLogger().error("找不到对应的command");
                 throw new RuntimeException();
             }
-            String result;
             Paranamer info = new CachingParanamer(new AnnotationParanamer(new BytecodeReadingParanamer()));
             String[] parameterNames = info.lookupParameterNames(method);
-            for (String parameterName : parameterNames){
-
+            String[] strings = new String[method.getParameterCount()];
+            for (int i=0,len=method.getParameterCount();i<len;i++){
+                if (parameterNames[i].equals("id"))
+                    strings[i] = String.valueOf(messageEvent.getSender().getId());
+                else if (parameterNames[i].equals("code"))
+                    strings[i] = inputs[1];
+                else
+                    strings[i] = null;
             }
-            int parameterLength = method.getParameterCount();
-            if (0 == parameterLength)
-                result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance()).toString();
-            else if (1 == parameterLength)
-                result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), inputs[1]).toString();
-            else if (2 == parameterLength)
-                result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), inputs[1], String.valueOf(messageEvent.getSender().getId())).toString();
-            else
-                result = "指令有误";
+            String result = method.invoke(method.getDeclaringClass().getDeclaredConstructor().newInstance(), (Object[]) strings).toString();
             messageEvent.getSubject().sendMessage(result);
         } catch (Exception e){
             e.printStackTrace();

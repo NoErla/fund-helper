@@ -19,7 +19,7 @@ repositories {
 
 dependencies{
     implementation("junit:junit:4.13.1")
-    implementation("cn.hutool:hutool-all:5.7.3")
+    implementation("cn.hutool:hutool-all:5.7.4")
     implementation("com.thoughtworks.paranamer:paranamer:2.8")
-
+    implementation("org.quartz-scheduler:quartz:2.3.2")
 }
