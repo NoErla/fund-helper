@@ -47,4 +47,15 @@ public class FundDao {
         CsvWriter writer = CsvUtil.getWriter(path, CharsetUtil.CHARSET_UTF_8,false);
         writer.writeBeans(users);
     }
+
+    public void delete(String id){
+        CsvReader reader = CsvUtil.getReader();
+        List<User> users = reader.read(ResourceUtil.getUtf8Reader(FileUtil.file(path).getAbsolutePath()), User.class);
+        Optional<User> first = users.stream().filter(user -> id.equals(user.getId())).findFirst();
+        first.ifPresent(user -> {
+            users.remove(user);
+            CsvWriter writer = CsvUtil.getWriter(path, CharsetUtil.CHARSET_UTF_8,false);
+            writer.writeBeans(users);
+        });
+    }
 }

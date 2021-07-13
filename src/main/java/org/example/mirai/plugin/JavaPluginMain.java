@@ -84,6 +84,7 @@ public final class JavaPluginMain extends JavaPlugin {
 
     private void initMapUrlMethod(){
         //获取对应的类路径
+        //TODO 取消硬编码
         String classurl = "org.example.mirai.plugin.CommandController";
         //获取类对象
         try {

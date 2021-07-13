@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
  */
 public class CommandController {
 
-    private FundCrawler fundCrawler = FundCrawler.getInstance();
+    private final FundCrawler fundCrawler = FundCrawler.getInstance();
 
-    private FundDao fundDao = FundDao.getInstance();
+    private final FundDao fundDao = FundDao.getInstance();
 
     private static final CommandController instance = new CommandController();
 
@@ -100,7 +100,8 @@ public class CommandController {
     }
 
     @MiraiCommand(".删除自选")
-    public String deleteFund(String code, String id){
-        return "开发中";
+    public String deleteFund(String id){
+        fundDao.delete(id);
+        return "删除成功";
     }
 }
