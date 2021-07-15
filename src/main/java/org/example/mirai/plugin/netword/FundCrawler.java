@@ -15,6 +15,10 @@ public class FundCrawler {
         return instance;
     }
 
+    /**
+     * 查询当日板块
+     * @return
+     */
     public JSONObject getIndustry () {
         try {
             String url = "https://api.doctorxiong.club/v1/stock/industry/rank";
@@ -26,6 +30,11 @@ public class FundCrawler {
         }
     }
 
+    /**
+     * 获得某基金信息
+     * @param code
+     * @return
+     */
     public JSONObject getFund (String code) {
         try {
             String url = "https://api.doctorxiong.club/v1/fund?code="+code;
@@ -37,6 +46,11 @@ public class FundCrawler {
         }
     }
 
+    /**
+     * 获得基金列表
+     * @param codes
+     * @return
+     */
     public JSONObject getFunds (String[] codes) {
         try {
             String code = ArrayUtil.join(codes, ",");

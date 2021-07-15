@@ -7,10 +7,7 @@ import org.example.mirai.plugin.dao.FundDao;
 import org.example.mirai.plugin.netword.FundCrawler;
 import org.example.mirai.plugin.pojo.User;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -31,7 +28,7 @@ public class CommandController {
         return instance;
     }
 
-    @MiraiCommand(".今日板块")
+    @MiraiCommand(value = ".今日板块", description = "查询今日板块情况（维护中），格式: .今日板块")
     public String dailyIndustry(){
         JSONObject industry = fundCrawler.getIndustry();
         JSONArray data = industry.getJSONArray("data");
@@ -52,7 +49,7 @@ public class CommandController {
         return sb.toString();
     }
 
-    @MiraiCommand(".基金")
+    @MiraiCommand(value = ".基金", description = "查询指定基金的情况，格式: .基金 <code>")
     public String fund(String code){
         JSONObject fund = fundCrawler.getFund(code).getJSONArray("data").toList(JSONObject.class).get(0);
         StringBuilder sb = new StringBuilder();
@@ -67,7 +64,7 @@ public class CommandController {
         return sb.toString();
     }
 
-    @MiraiCommand(".我的基金")
+    @MiraiCommand(value = ".我的基金", description = "查询登记的基金情况，格式: .我的基金")
     public String myFund(String id){
         Optional<User> query = fundDao.query(id);
         //如果用户为空则抛出异常
@@ -80,8 +77,8 @@ public class CommandController {
         return sb.toString();
     }
 
-    @MiraiCommand(".添加自选")
-    public String insertFund(String code, String id){
+    @MiraiCommand(value = ".添加自选", description = "登记基金(会覆盖之前的记录)，格式: .添加自选 <code1>,<code2>")
+    public String saveFund(String code, String id){
         List<String> fundList = Arrays.stream(code.split(",")).collect(Collectors.toList());
         Optional<User> query = fundDao.query(id);
         //如果存在用户则修改
@@ -99,9 +96,18 @@ public class CommandController {
         return "添加成功";
     }
 
-    @MiraiCommand(".删除自选")
+    @MiraiCommand(value = ".删除自选", description = "删除自己登记的所有记录，格式: .删除自选")
     public String deleteFund(String id){
         fundDao.delete(id);
         return "删除成功";
+    }
+
+    @MiraiCommand(value = ".help", description = "查询所有命令详情，格式: .help")
+    public String help(String id){
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> entry : JavaPluginMain.commandDescription.entrySet()){
+            sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("/n");
+        }
+        return sb.toString();
     }
 }

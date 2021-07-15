@@ -54,6 +54,10 @@ public class FundDao {
         Optional<User> first = users.stream().filter(user -> id.equals(user.getId())).findFirst();
         first.ifPresent(user -> {
             users.remove(user);
+            //防止删除最后一个用户的时候连表头一起删除
+            if (users.size() == 0){
+                users.add(new User());
+            }
             CsvWriter writer = CsvUtil.getWriter(path, CharsetUtil.CHARSET_UTF_8,false);
             writer.writeBeans(users);
         });

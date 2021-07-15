@@ -24,7 +24,9 @@ public final class JavaPluginMain extends JavaPlugin {
     public static final JavaPluginMain INSTANCE = new JavaPluginMain();
 
     //key:方法路径，value:方法
-    public static Map<String, Method> mapUrlMethod = new HashMap<>();
+    public static Map<String, Method> commandMethod = new HashMap<>();
+    //key:方法路径，value:方法描述，用于help命令
+    public static Map<String, String> commandDescription = new HashMap<>();
 
     private JavaPluginMain() {
         super(new JvmPluginDescriptionBuilder("org.example.mirai-example", "0.1.0")
@@ -92,13 +94,14 @@ public final class JavaPluginMain extends JavaPlugin {
             //获得该类的所有方法对象
             Method [] methods = c.getDeclaredMethods();
             //forEach 遍历方法对象
-            for(Method m:methods){
+            for(Method method : methods){
                 //判断是不是UserCommand的注解
-                if (m.isAnnotationPresent(MiraiCommand.class)){
+                if (method.isAnnotationPresent(MiraiCommand.class)){
                     //如果有存在就把该标签取出来
-                    MiraiCommand xReqMap = m.getAnnotation(MiraiCommand.class);
+                    MiraiCommand xReqMap = method.getAnnotation(MiraiCommand.class);
                     //把方法和该方法对应的标签进行绑定
-                    mapUrlMethod.put(xReqMap.value(), m);
+                    commandMethod.put(xReqMap.value(), method);
+                    commandDescription.put(xReqMap.value(), xReqMap.description());
                 }
             }
         } catch (Exception e) {

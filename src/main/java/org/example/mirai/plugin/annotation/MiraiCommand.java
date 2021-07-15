@@ -11,4 +11,5 @@ import java.lang.annotation.*;
 @Documented
 public @interface MiraiCommand {
     String value() default "";
+    String description() default "";
 }

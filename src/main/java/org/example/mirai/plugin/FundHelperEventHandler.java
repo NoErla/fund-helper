@@ -24,7 +24,7 @@ public class FundHelperEventHandler extends SimpleListenerHost {
 
 
     public FundHelperEventHandler() {
-        this.commands = JavaPluginMain.mapUrlMethod.keySet();
+        this.commands = JavaPluginMain.commandMethod.keySet();
     }
 
     /**
@@ -70,7 +70,7 @@ public class FundHelperEventHandler extends SimpleListenerHost {
             return;
         try{
             String[] inputs = input.split(" ");
-            Method method = JavaPluginMain.mapUrlMethod.get(inputs[0]);  //通过注解得到对应的方法
+            Method method = JavaPluginMain.commandMethod.get(inputs[0]);  //通过注解得到对应的方法
             if (null == method)
                 return;
             Class<?> clazz = method.getDeclaringClass();
