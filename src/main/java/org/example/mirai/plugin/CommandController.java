@@ -106,7 +106,7 @@ public class CommandController {
     public String help(String id){
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> entry : JavaPluginMain.commandDescription.entrySet()){
-            sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("/n");
+            sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("\n");
         }
         return sb.toString();
     }
