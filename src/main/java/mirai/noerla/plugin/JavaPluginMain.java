@@ -1,5 +1,6 @@
 package mirai.noerla.plugin;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.csv.CsvUtil;
 import cn.hutool.core.text.csv.CsvWriter;
@@ -74,10 +75,15 @@ public final class JavaPluginMain extends JavaPlugin {
             if (!FileUtil.exist(PluginConsts.CSV_PATH)){
                 //创建data.csv文件
                 CsvWriter writer = CsvUtil.getWriter(PluginConsts.CSV_PATH, CharsetUtil.CHARSET_UTF_8);
-                //按行写出
-                List<User> users = new ArrayList<>();
-                users.add(new User());
-                writer.writeBeans(users);
+                //写出表头
+                Map<String, Object> properties  = BeanUtil.beanToMap(new User());
+                writer.writeLine(properties.keySet().toArray(new String[0]));
+                //初始用户
+                User initUser = new User();
+                initUser.setId("123");
+                initUser.setFundList(new ArrayList<>());
+                writer.writeLine(initUser.getId(), initUser.getFundList().toString());
+                writer.flush();
             }
         } catch (Exception e){
             getLogger().error("csv文件初始化失败");

@@ -24,8 +24,6 @@ public class FundDao {
     }
 
     public void add(User user){
-        List<User> users = new ArrayList<>();
-        users.add(user);
         CsvWriter writer = CsvUtil.getWriter(PluginConsts.CSV_PATH, CharsetUtil.CHARSET_UTF_8, true);
         writer.writeLine(user.getId(), user.getFundList().toString());
         writer.flush();
@@ -33,14 +31,12 @@ public class FundDao {
 
     public Optional<User> query(String id){
         //ResourceUtil.getUtf8Reader在centos下无法获得classpath，因为使用了classloader.getResource
-        CsvReader reader = CsvUtil.getReader();
-        List<User> users = reader.read(ResourceUtil.getUtf8Reader(FileUtil.file(PluginConsts.CSV_PATH).getAbsolutePath()), User.class);
+        List<User> users = getAllUsers();
         return users.stream().filter(user -> user.getId().equals(id)).findFirst();
     }
 
     public void update(User user){
-        CsvReader reader = CsvUtil.getReader();
-        List<User> users = reader.read(ResourceUtil.getUtf8Reader(FileUtil.file(PluginConsts.CSV_PATH).getAbsolutePath()), User.class);
+        List<User> users = getAllUsers();
         Optional<User> first = users.stream().filter(u -> u.getId().equals(user.getId())).findFirst();
         first.ifPresent(f-> f.setFundList(user.getFundList()));
         CsvWriter writer = CsvUtil.getWriter(PluginConsts.CSV_PATH, CharsetUtil.CHARSET_UTF_8,false);
@@ -48,17 +44,22 @@ public class FundDao {
     }
 
     public void delete(String id){
-        CsvReader reader = CsvUtil.getReader();
-        List<User> users = reader.read(ResourceUtil.getUtf8Reader(FileUtil.file(PluginConsts.CSV_PATH).getAbsolutePath()), User.class);
+        List<User> users = getAllUsers();
         Optional<User> first = users.stream().filter(user -> id.equals(user.getId())).findFirst();
         first.ifPresent(user -> {
             users.remove(user);
             //防止删除最后一个用户的时候连表头一起删除
-            if (users.size() == 0){
+            //TODO 固定用户信息
+            if (users.isEmpty()){
                 users.add(new User());
             }
             CsvWriter writer = CsvUtil.getWriter(PluginConsts.CSV_PATH, CharsetUtil.CHARSET_UTF_8,false);
             writer.writeBeans(users);
         });
+    }
+
+    private List<User> getAllUsers(){
+        CsvReader reader = CsvUtil.getReader();
+        return reader.read(ResourceUtil.getUtf8Reader(FileUtil.file(PluginConsts.CSV_PATH).getAbsolutePath()), User.class);
     }
 }
