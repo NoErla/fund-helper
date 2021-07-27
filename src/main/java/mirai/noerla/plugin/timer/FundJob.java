@@ -1,14 +1,14 @@
-package org.example.mirai.plugin.timer;
+package mirai.noerla.plugin.timer;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
 import cn.hutool.core.text.csv.CsvReader;
 import cn.hutool.core.text.csv.CsvUtil;
+import mirai.noerla.plugin.CommandController;
+import mirai.noerla.plugin.JavaPluginMain;
+import mirai.noerla.plugin.PluginConsts;
 import net.mamoe.mirai.Bot;
-import org.example.mirai.plugin.CommandController;
-import org.example.mirai.plugin.JavaPluginMain;
-import org.example.mirai.plugin.PluginConsts;
-import org.example.mirai.plugin.pojo.User;
+import mirai.noerla.plugin.pojo.User;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

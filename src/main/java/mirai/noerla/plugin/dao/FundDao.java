@@ -1,4 +1,4 @@
-package org.example.mirai.plugin.dao;
+package mirai.noerla.plugin.dao;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
@@ -6,8 +6,8 @@ import cn.hutool.core.text.csv.CsvReader;
 import cn.hutool.core.text.csv.CsvUtil;
 import cn.hutool.core.text.csv.CsvWriter;
 import cn.hutool.core.util.CharsetUtil;
-import org.example.mirai.plugin.PluginConsts;
-import org.example.mirai.plugin.pojo.User;
+import mirai.noerla.plugin.PluginConsts;
+import mirai.noerla.plugin.pojo.User;
 
 import java.util.ArrayList;
 import java.util.List;

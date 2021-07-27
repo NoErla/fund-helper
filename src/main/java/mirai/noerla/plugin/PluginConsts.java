@@ -1,4 +1,4 @@
-package org.example.mirai.plugin;
+package mirai.noerla.plugin;
 
 public class PluginConsts {
 

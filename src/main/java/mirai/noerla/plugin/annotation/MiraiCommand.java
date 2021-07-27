@@ -1,4 +1,4 @@
-package org.example.mirai.plugin.annotation;
+package mirai.noerla.plugin.annotation;
 
 import java.lang.annotation.*;
 

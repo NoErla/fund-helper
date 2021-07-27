@@ -1,4 +1,4 @@
-package org.example.mirai.plugin;
+package mirai.noerla.plugin;
 
 import com.thoughtworks.paranamer.AnnotationParanamer;
 import com.thoughtworks.paranamer.BytecodeReadingParanamer;

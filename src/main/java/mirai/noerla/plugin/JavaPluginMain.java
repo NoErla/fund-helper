@@ -1,15 +1,15 @@
-package org.example.mirai.plugin;
+package mirai.noerla.plugin;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.csv.CsvUtil;
 import cn.hutool.core.text.csv.CsvWriter;
 import cn.hutool.core.util.CharsetUtil;
+import mirai.noerla.plugin.annotation.MiraiCommand;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
-import org.example.mirai.plugin.annotation.MiraiCommand;
-import org.example.mirai.plugin.pojo.User;
-import org.example.mirai.plugin.timer.FundJob;
+import mirai.noerla.plugin.pojo.User;
+import mirai.noerla.plugin.timer.FundJob;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -29,7 +29,7 @@ public final class JavaPluginMain extends JavaPlugin {
     public static Map<String, String> commandDescription = new HashMap<>();
 
     private JavaPluginMain() {
-        super(new JvmPluginDescriptionBuilder("org.example.mirai-example", "0.1.0")
+        super(new JvmPluginDescriptionBuilder("mirai.noerla.plugin", "0.1.0")
                 .info("EG")
                 .build());
     }
@@ -88,7 +88,7 @@ public final class JavaPluginMain extends JavaPlugin {
     private void initMapUrlMethod(){
         //获取对应的类路径
         //TODO 取消硬编码
-        String classurl = "org.example.mirai.plugin.CommandController";
+        String classurl = "mirai.noerla.plugin.CommandController";
         //获取类对象
         try {
             Class<?> c = Class.forName(classurl);
