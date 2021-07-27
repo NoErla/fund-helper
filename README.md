@@ -1,5 +1,30 @@
-# mirai-console-plugin-template
+# Fund-Helper
 
-[Mirai Console](https://github.com/mamoe/mirai-console) 插件模板, 使用 Kotlin + Gradle.
+## 指令
 
-[如何使用](https://github.com/project-mirai/how-to-use-plugin-template)
+注：以下指令兼容./。和,/，
+
+### .基金
+
+* 功能：查询指定基金详情
+* 格式：.基金 <基金编号>
+
+### .添加自选
+
+* 功能：记录自选基金
+* 格式：.添加自选 <基金编号1>,<基金编号2>
+
+### .我的基金
+
+* 功能：查询登记的基金情况
+* 格式：.我的基金
+
+### .删除自选
+
+* 功能：删除登记的所有记录
+* 格式：.删除自选
+
+### .help
+
+* 功能：查询所有命令详情
+* 格式：.help

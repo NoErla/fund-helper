@@ -49,6 +49,7 @@ public final class JavaPluginMain extends JavaPlugin {
 
     private void initScheduler() {
         try {
+            getLogger().info("准备开启定时任务");
             // 1、创建调度器Scheduler
             SchedulerFactory schedulerFactory = new StdSchedulerFactory();
             Scheduler scheduler = schedulerFactory.getScheduler();

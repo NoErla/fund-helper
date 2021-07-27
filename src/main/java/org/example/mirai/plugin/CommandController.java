@@ -49,7 +49,7 @@ public class CommandController {
         return sb.toString();
     }
 
-    @MiraiCommand(value = ".基金", description = "查询指定基金的情况，格式: .基金 <code>")
+    @MiraiCommand(value = ".基金", description = "查询指定基金详情，格式: .基金 <code>")
     public String fund(String code){
         JSONObject fund = fundCrawler.getFund(code).getJSONArray("data").toList(JSONObject.class).get(0);
         StringBuilder sb = new StringBuilder();
@@ -77,7 +77,7 @@ public class CommandController {
         return sb.toString();
     }
 
-    @MiraiCommand(value = ".添加自选", description = "登记基金(会覆盖之前的记录)，格式: .添加自选 <code1>,<code2>")
+    @MiraiCommand(value = ".添加自选", description = "登记基金，格式: .添加自选 <code1>,<code2>")
     public String saveFund(String code, String id){
         List<String> fundList = Arrays.stream(code.split(",")).collect(Collectors.toList());
         Optional<User> query = fundDao.query(id);
