@@ -28,7 +28,7 @@ public class CommandController {
         return instance;
     }
 
-    @MiraiCommand(value = ".今日板块", description = "查询今日板块情况（维护中），格式: .今日板块")
+    @MiraiCommand(value = ".今日板块", description = "查询今日板块情况（暂时无法使用），格式: .今日板块")
     public String dailyIndustry(){
         JSONObject industry = fundCrawler.getIndustry();
         JSONArray data = industry.getJSONArray("data");
@@ -77,7 +77,7 @@ public class CommandController {
         return sb.toString();
     }
 
-    @MiraiCommand(value = ".添加自选", description = "登记基金(会覆盖之前的记录)，格式: .添加自选 <code1>,<code2>")
+    @MiraiCommand(value = ".添加自选", description = "添加自选基金，格式: .添加自选 <code1>,<code2>")
     public String saveFund(String code, String id){
         List<String> fundList = Arrays.stream(code.split(",")).collect(Collectors.toList());
         Optional<User> query = fundDao.query(id);
