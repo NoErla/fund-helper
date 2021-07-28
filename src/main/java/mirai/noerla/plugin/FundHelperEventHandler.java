@@ -1,4 +1,4 @@
-package org.example.mirai.plugin;
+package mirai.noerla.plugin;
 
 import com.thoughtworks.paranamer.AnnotationParanamer;
 import com.thoughtworks.paranamer.BytecodeReadingParanamer;
@@ -7,10 +7,7 @@ import com.thoughtworks.paranamer.Paranamer;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.ListeningStatus;
 import net.mamoe.mirai.event.SimpleListenerHost;
-import net.mamoe.mirai.event.events.FriendMessageEvent;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.event.events.GroupTempMessageEvent;
-import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.event.events.*;
 import net.mamoe.mirai.utils.MiraiLogger;
 
 import java.lang.reflect.Method;
@@ -25,6 +22,19 @@ public class FundHelperEventHandler extends SimpleListenerHost {
 
     public FundHelperEventHandler() {
         this.commands = JavaPluginMain.commandMethod.keySet();
+    }
+
+    @EventHandler
+    public ListeningStatus onBotGroupRequest(BotInvitedJoinGroupRequestEvent event) {
+        //收到邀请自动加入
+        event.accept();
+        return ListeningStatus.LISTENING;
+    }
+
+    @EventHandler
+    public ListeningStatus onFriendRequest(NewFriendRequestEvent event) {
+        event.accept();
+        return ListeningStatus.LISTENING;
     }
 
     /**

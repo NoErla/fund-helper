@@ -9,4 +9,4 @@ pluginManagement {
         maven(url = "https://plugins.gradle.org/m2/")
     }
 }
-rootProject.name = "mirai-console-plugin-template"
+rootProject.name = "fund-helper"

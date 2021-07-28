@@ -1,15 +1,16 @@
-package org.example.mirai.plugin;
+package mirai.noerla.plugin;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.text.csv.CsvUtil;
 import cn.hutool.core.text.csv.CsvWriter;
 import cn.hutool.core.util.CharsetUtil;
+import mirai.noerla.plugin.annotation.MiraiCommand;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
-import org.example.mirai.plugin.annotation.MiraiCommand;
-import org.example.mirai.plugin.pojo.User;
-import org.example.mirai.plugin.timer.FundJob;
+import mirai.noerla.plugin.pojo.User;
+import mirai.noerla.plugin.timer.FundJob;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -29,7 +30,7 @@ public final class JavaPluginMain extends JavaPlugin {
     public static Map<String, String> commandDescription = new HashMap<>();
 
     private JavaPluginMain() {
-        super(new JvmPluginDescriptionBuilder("org.example.mirai-example", "0.1.0")
+        super(new JvmPluginDescriptionBuilder("mirai.noerla.plugin", "0.1.0")
                 .info("EG")
                 .build());
     }
@@ -49,7 +50,7 @@ public final class JavaPluginMain extends JavaPlugin {
 
     private void initScheduler() {
         try {
-            getLogger().info("开始定时任务");
+            getLogger().info("准备开启定时任务");
             // 1、创建调度器Scheduler
             SchedulerFactory schedulerFactory = new StdSchedulerFactory();
             Scheduler scheduler = schedulerFactory.getScheduler();
@@ -74,10 +75,15 @@ public final class JavaPluginMain extends JavaPlugin {
             if (!FileUtil.exist(PluginConsts.CSV_PATH)){
                 //创建data.csv文件
                 CsvWriter writer = CsvUtil.getWriter(PluginConsts.CSV_PATH, CharsetUtil.CHARSET_UTF_8);
-                //按行写出
-                List<User> users = new ArrayList<>();
-                users.add(new User());
-                writer.writeBeans(users);
+                //写出表头
+                Map<String, Object> properties  = BeanUtil.beanToMap(new User());
+                writer.writeLine(properties.keySet().toArray(new String[0]));
+                //初始用户
+                User initUser = new User();
+                initUser.setId("123");
+                initUser.setFundList(new ArrayList<>());
+                writer.writeLine(initUser.getId(), initUser.getFundList().toString());
+                writer.flush();
             }
         } catch (Exception e){
             getLogger().error("csv文件初始化失败");
@@ -88,7 +94,7 @@ public final class JavaPluginMain extends JavaPlugin {
     private void initMapUrlMethod(){
         //获取对应的类路径
         //TODO 取消硬编码
-        String classurl = "org.example.mirai.plugin.CommandController";
+        String classurl = "mirai.noerla.plugin.CommandController";
         //获取类对象
         try {
             Class<?> c = Class.forName(classurl);

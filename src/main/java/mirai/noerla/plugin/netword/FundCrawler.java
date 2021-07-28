@@ -1,9 +1,9 @@
-package org.example.mirai.plugin.netword;
+package mirai.noerla.plugin.netword;
 
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONObject;
-import org.example.mirai.plugin.JavaPluginMain;
+import mirai.noerla.plugin.JavaPluginMain;
 
 public class FundCrawler {
 

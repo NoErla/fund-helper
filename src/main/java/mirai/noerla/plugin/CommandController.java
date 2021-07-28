@@ -1,11 +1,11 @@
-package org.example.mirai.plugin;
+package mirai.noerla.plugin;
 
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
-import org.example.mirai.plugin.annotation.MiraiCommand;
-import org.example.mirai.plugin.dao.FundDao;
-import org.example.mirai.plugin.netword.FundCrawler;
-import org.example.mirai.plugin.pojo.User;
+import mirai.noerla.plugin.annotation.MiraiCommand;
+import mirai.noerla.plugin.dao.FundDao;
+import mirai.noerla.plugin.netword.FundCrawler;
+import mirai.noerla.plugin.pojo.User;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ public class CommandController {
         return instance;
     }
 
-    @MiraiCommand(value = ".今日板块", description = "查询今日板块情况（暂时无法使用），格式: .今日板块")
+    @MiraiCommand(value = ".今日板块", description = "查询今日板块情况（维护中），格式: .今日板块")
     public String dailyIndustry(){
         JSONObject industry = fundCrawler.getIndustry();
         JSONArray data = industry.getJSONArray("data");
@@ -49,7 +49,7 @@ public class CommandController {
         return sb.toString();
     }
 
-    @MiraiCommand(value = ".基金", description = "查询指定基金的情况，格式: .基金 <code>")
+    @MiraiCommand(value = ".基金", description = "查询指定基金详情，格式: .基金 <code>")
     public String fund(String code){
         JSONObject fund = fundCrawler.getFund(code).getJSONArray("data").toList(JSONObject.class).get(0);
         StringBuilder sb = new StringBuilder();
@@ -77,7 +77,7 @@ public class CommandController {
         return sb.toString();
     }
 
-    @MiraiCommand(value = ".添加自选", description = "添加自选基金，格式: .添加自选 <code1>,<code2>")
+    @MiraiCommand(value = ".添加自选", description = "登记基金，格式: .添加自选 <code1>,<code2>")
     public String saveFund(String code, String id){
         List<String> fundList = Arrays.stream(code.split(",")).collect(Collectors.toList());
         Optional<User> query = fundDao.query(id);
@@ -106,7 +106,7 @@ public class CommandController {
     public String help(String id){
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> entry : JavaPluginMain.commandDescription.entrySet()){
-            sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("\n");
+            sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("/n");
         }
         return sb.toString();
     }
