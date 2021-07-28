@@ -84,7 +84,7 @@ public class CommandController {
         //如果存在用户则修改
         if (query.isPresent()){
             User user = query.get();
-            user.setFundList(fundList);
+            user.getFundList().retainAll(fundList);
             fundDao.update(user);
         } else {
             //如果用户为空则添加记录
