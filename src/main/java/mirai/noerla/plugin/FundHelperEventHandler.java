@@ -84,22 +84,6 @@ public class FundHelperEventHandler extends SimpleListenerHost {
         if (!input.startsWith(".") && !input.startsWith("。"))
             return;
         input = normalize(input);
-//        if (input.equals(".测试")) {
-//
-//            test cg = new test();
-//            try {
-//                String[][] tableData2 = {{"8月31日（户）","新增用户数","日访问量","累计用户数","环比上月"},
-//                        {"合肥和巢湖","469281","1500000","31.2%","33.6%"},
-//                        {"芜湖","469281","1500000","31.2%","33.6%"},
-//                        {"蚌埠","469281","1500000","31.2%","33.6%"},
-//                        {"淮南","469281","1500000","31.2%","33.6%"},
-//                        {"马鞍山","469281","1500000","31.2%","33.6%"},
-//                        {"淮北","469281","1500000","31.2%","33.6%"}};
-//                cg.myGraphicsGeneration(tableData2, messageEvent);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
         if(!isCommand(input))
             return;
         try{
@@ -115,6 +99,7 @@ public class FundHelperEventHandler extends SimpleListenerHost {
             //反射执行方法
             String result = method.invoke(getInstance.invoke(clazz), (Object[]) parameters).toString();
             String[] results = result.split("\n");
+            //fixme 基金信息只有一行的话不显示图片
             if (results.length > 1){
                 createTableImage(results, messageEvent);
             } else
@@ -159,17 +144,11 @@ public class FundHelperEventHandler extends SimpleListenerHost {
     }
 
     private void createTableImage(String cellsValue[], MessageEvent messageEvent) throws IOException {
-
-        // 字体大小
-        int fontTitileSize = 15;
         // 横线的行数
         int totalrow = cellsValue.length + 1;
         // 竖线的行数
         //TODO 列数固定改为不固定
         int totalcol = 2;
-//        if (cellsValue[0] != null) {
-//            totalcol = cellsValue[0].length;
-//        }
         // 图片宽度
         int imageWidth = 1024;
         // 行高
@@ -197,9 +176,6 @@ public class FundHelperEventHandler extends SimpleListenerHost {
             graphics.setColor(Color.black);
             graphics.drawLine(startWidth + k * colwidth, startHeight + rowheight, startWidth + k * colwidth, startHeight + rowheight * totalrow);
         }
-        //设置字体
-        //写标题
-        //String title = "【标题】";
         graphics.drawString("", startWidth, startHeight + rowheight - 10);
         //写入内容
         for (int n = 0; n < cellsValue.length; n++) {
@@ -210,7 +186,6 @@ public class FundHelperEventHandler extends SimpleListenerHost {
             }
         }
         // 保存图片
-        ByteArrayOutputStream out =new ByteArrayOutputStream();
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         ImageIO.write(image, "png", os);
         InputStream is = new ByteArrayInputStream(os.toByteArray());

@@ -56,8 +56,12 @@ public final class JavaPluginMain extends JavaPlugin {
             // 2、创建JobDetail实例
             JobDetail jobDetail = JobBuilder.newJob(FundJob.class).build();
             // 3、构建Trigger实例,每周一到周五14:40执行一次
+//            SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.simpleSchedule();
+//            simpleScheduleBuilder.withIntervalInSeconds(3);
+//            simpleScheduleBuilder.withRepeatCount(5);
             Trigger trigger = TriggerBuilder.newTrigger()
                     .startNow()//立即生效
+                    //.withSchedule(simpleScheduleBuilder)
                     .withSchedule(CronScheduleBuilder.cronSchedule("0 40 14 ? * 1-5 *"))
                     .build();//一直执行
             //4、执行

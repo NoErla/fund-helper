@@ -59,7 +59,6 @@ public class FundDao {
 
     private List<User> getAllUsers(){
         CsvReader reader = CsvUtil.getReader();
-        System.out.println(FileUtil.file(PluginConsts.CSV_PATH));
         return reader.read(ResourceUtil.getUtf8Reader(FileUtil.file(PluginConsts.CSV_PATH).getAbsolutePath()), User.class);
     }
 }
