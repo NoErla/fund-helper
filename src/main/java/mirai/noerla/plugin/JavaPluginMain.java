@@ -29,7 +29,7 @@ public final class JavaPluginMain extends JavaPlugin {
     public static Map<String, String> commandDescription = new HashMap<>();
 
     private JavaPluginMain() {
-        super(new JvmPluginDescriptionBuilder("mirai.noerla.plugin", "0.1.1")
+        super(new JvmPluginDescriptionBuilder("mirai.noerla.plugin", "0.1.2")
                 .info("EG")
                 .build());
     }
