@@ -6,18 +6,17 @@ import cn.hutool.core.text.csv.CsvUtil;
 import cn.hutool.core.text.csv.CsvWriter;
 import cn.hutool.core.util.CharsetUtil;
 import mirai.noerla.plugin.annotation.MiraiCommand;
+import mirai.noerla.plugin.pojo.User;
+import mirai.noerla.plugin.timer.FundJob;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
-import mirai.noerla.plugin.pojo.User;
-import mirai.noerla.plugin.timer.FundJob;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public final class JavaPluginMain extends JavaPlugin {
@@ -30,7 +29,7 @@ public final class JavaPluginMain extends JavaPlugin {
     public static Map<String, String> commandDescription = new HashMap<>();
 
     private JavaPluginMain() {
-        super(new JvmPluginDescriptionBuilder("mirai.noerla.plugin", "0.1.0")
+        super(new JvmPluginDescriptionBuilder("mirai.noerla.plugin", "0.1.1")
                 .info("EG")
                 .build());
     }

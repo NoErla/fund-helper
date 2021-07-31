@@ -27,8 +27,8 @@ public class FundJob implements Job {
                 reader.read(ResourceUtil.getUtf8Reader(FileUtil.file(PluginConsts.CSV_PATH).getAbsolutePath()), User.class);
         for (User user : users){
             if (instance.getFriend(Long.parseLong(user.getId())) != null){
-                JavaPluginMain.INSTANCE.getLogger().info("定时任务对象：" + user.getId());
-                instance.getFriend(Long.parseLong(user.getId())).sendMessage(commandController.myFund(user.getId()));
+//                JavaPluginMain.INSTANCE.getLogger().info("定时任务对象：" + user.getId());
+//                instance.getFriend(Long.parseLong(user.getId())).sendMessage(commandController.myFund(user.getId()));
             }
             //TODO 非好友支持
         }

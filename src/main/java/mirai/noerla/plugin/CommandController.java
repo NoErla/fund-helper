@@ -84,7 +84,8 @@ public class CommandController {
         //如果存在用户则修改
         if (query.isPresent()){
             User user = query.get();
-            user.getFundList().retainAll(fundList);
+            user.getFundList().removeAll(fundList);
+            user.getFundList().addAll(fundList);
             fundDao.update(user);
         } else {
             //如果用户为空则添加记录
@@ -104,6 +105,15 @@ public class CommandController {
 
     @MiraiCommand(value = ".help", description = "查询所有命令详情，格式: .help")
     public String help(String id){
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> entry : JavaPluginMain.commandDescription.entrySet()){
+            sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("\n");
+        }
+        return sb.toString();
+    }
+
+    @MiraiCommand(value = ".测试", description = "测试用")
+    public String test(String id){
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> entry : JavaPluginMain.commandDescription.entrySet()){
             sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("\n");

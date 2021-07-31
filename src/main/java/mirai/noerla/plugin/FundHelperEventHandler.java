@@ -8,8 +8,16 @@ import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.ListeningStatus;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.*;
+import net.mamoe.mirai.utils.ExternalResource;
 import net.mamoe.mirai.utils.MiraiLogger;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.Set;
 
@@ -76,6 +84,22 @@ public class FundHelperEventHandler extends SimpleListenerHost {
         if (!input.startsWith(".") && !input.startsWith("。"))
             return;
         input = normalize(input);
+//        if (input.equals(".测试")) {
+//
+//            test cg = new test();
+//            try {
+//                String[][] tableData2 = {{"8月31日（户）","新增用户数","日访问量","累计用户数","环比上月"},
+//                        {"合肥和巢湖","469281","1500000","31.2%","33.6%"},
+//                        {"芜湖","469281","1500000","31.2%","33.6%"},
+//                        {"蚌埠","469281","1500000","31.2%","33.6%"},
+//                        {"淮南","469281","1500000","31.2%","33.6%"},
+//                        {"马鞍山","469281","1500000","31.2%","33.6%"},
+//                        {"淮北","469281","1500000","31.2%","33.6%"}};
+//                cg.myGraphicsGeneration(tableData2, messageEvent);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
         if(!isCommand(input))
             return;
         try{
@@ -90,7 +114,11 @@ public class FundHelperEventHandler extends SimpleListenerHost {
             String[] parameters = dataBinder(method, String.valueOf(messageEvent.getSender().getId()), inputs.length>=2 ? inputs[1] : null);
             //反射执行方法
             String result = method.invoke(getInstance.invoke(clazz), (Object[]) parameters).toString();
-            messageEvent.getSubject().sendMessage(result);
+            String[] results = result.split("\n");
+            if (results.length > 1){
+                createTableImage(results, messageEvent);
+            } else
+                messageEvent.getSubject().sendMessage(result);
         } catch (Exception e){
             logger.error(e.getMessage());
             messageEvent.getSubject().sendMessage("错误");
@@ -128,6 +156,65 @@ public class FundHelperEventHandler extends SimpleListenerHost {
                 parameters[i] = null;
         }
         return parameters;
+    }
+
+    private void createTableImage(String cellsValue[], MessageEvent messageEvent) throws IOException {
+
+        // 字体大小
+        int fontTitileSize = 15;
+        // 横线的行数
+        int totalrow = cellsValue.length + 1;
+        // 竖线的行数
+        //TODO 列数固定改为不固定
+        int totalcol = 2;
+//        if (cellsValue[0] != null) {
+//            totalcol = cellsValue[0].length;
+//        }
+        // 图片宽度
+        int imageWidth = 1024;
+        // 行高
+        int rowheight = 40;
+        // 图片高度
+        int imageHeight = totalrow * rowheight + 50;
+        // 起始高度
+        int startHeight = 10;
+        // 起始宽度
+        int startWidth = 10;
+        // 单元格宽度
+        int colwidth = (int) ((imageWidth - 20) / totalcol);
+        BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics graphics = image.getGraphics();
+        graphics.setColor(Color.WHITE);
+        graphics.fillRect(0, 0, imageWidth, imageHeight);
+        graphics.setColor(new Color(220, 240, 240));
+        //画横线
+        for (int j = 0; j < totalrow; j++) {
+            graphics.setColor(Color.black);
+            graphics.drawLine(startWidth, startHeight + (j + 1) * rowheight, startWidth + colwidth * totalcol, startHeight + (j + 1) * rowheight);
+        }
+        //画竖线
+        for (int k = 0; k < totalcol + 1; k++) {
+            graphics.setColor(Color.black);
+            graphics.drawLine(startWidth + k * colwidth, startHeight + rowheight, startWidth + k * colwidth, startHeight + rowheight * totalrow);
+        }
+        //设置字体
+        //写标题
+        //String title = "【标题】";
+        graphics.drawString("", startWidth, startHeight + rowheight - 10);
+        //写入内容
+        for (int n = 0; n < cellsValue.length; n++) {
+            String[] data = cellsValue[n].split(":");
+            for (int l = 0; l < 2; l++) {
+                graphics.setColor(Color.BLACK);
+                graphics.drawString(data[l], startWidth + colwidth * l + 5, startHeight + rowheight * (n + 2) - 10);
+            }
+        }
+        // 保存图片
+        ByteArrayOutputStream out =new ByteArrayOutputStream();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", os);
+        InputStream is = new ByteArrayInputStream(os.toByteArray());
+        ExternalResource.sendAsImage(is, messageEvent.getSubject());
     }
 
 

@@ -9,7 +9,6 @@ import cn.hutool.core.util.CharsetUtil;
 import mirai.noerla.plugin.PluginConsts;
 import mirai.noerla.plugin.pojo.User;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,6 +59,7 @@ public class FundDao {
 
     private List<User> getAllUsers(){
         CsvReader reader = CsvUtil.getReader();
+        System.out.println(FileUtil.file(PluginConsts.CSV_PATH));
         return reader.read(ResourceUtil.getUtf8Reader(FileUtil.file(PluginConsts.CSV_PATH).getAbsolutePath()), User.class);
     }
 }
