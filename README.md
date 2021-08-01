@@ -13,7 +13,7 @@
 * 功能：查询指定基金详情
 * 格式：.基金 <基金编号>
 * 返回示例
-  ![image](resources/image/基金详情.png)
+  ![image](src/main/resources/image/基金详情.png)
 ### .添加自选
 
 * 功能：记录自选基金
@@ -24,7 +24,7 @@
 * 功能：查询登记的基金情况（周一至周五14：40会自动推送基金信息给好友）
 * 格式：.我的基金
 * 返回示例
-  ![image](resources/image/我的基金.png)
+  ![image](src/main/resources/image/我的基金.png)
 ### .删除自选
 
 * 功能：删除登记的所有记录
