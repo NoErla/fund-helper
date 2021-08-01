@@ -43,7 +43,6 @@ public class FundJob implements Job {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                //instance.getFriend(Long.parseLong(user.getId())).sendMessage(commandController.myFund(user.getId()));
             }
             //TODO 非好友支持
         }
