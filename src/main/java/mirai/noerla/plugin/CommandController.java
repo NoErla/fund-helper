@@ -72,7 +72,7 @@ public class CommandController {
         StringBuilder sb = new StringBuilder();
         List<JSONObject> funds = fundCrawler.getFunds(user.getFundList().toArray(new String[0])).getJSONArray("data").toList(JSONObject.class);
         for (JSONObject fund : funds){
-            sb.append(fund.getStr("name")).append(": ").append(fund.getStr("expectGrowth")).append("\n");
+            sb.append(fund.getStr("name")).append("(").append(fund.getStr("code")).append(")").append(": ").append(fund.getStr("expectGrowth")).append("\n");
         }
         return sb.toString();
     }
@@ -112,11 +112,13 @@ public class CommandController {
         return sb.toString();
     }
 
-    @MiraiCommand(value = ".测试", description = "测试用")
-    public String test(String id){
+    @MiraiCommand(value = ".持仓", description = "查看基金持仓，格式：.持仓 <code>")
+    public String position(String code){
+        JSONObject fund = fundCrawler.getPosition(code).getJSONObject("data");
+        List<JSONArray> stockList = fund.getJSONArray("stockList").toList(JSONArray.class);
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, String> entry : JavaPluginMain.commandDescription.entrySet()){
-            sb.append(entry.getKey()).append(" : ").append(entry.getValue()).append("\n");
+        for (int i=0,len=stockList.size();i<len;i++){
+            sb.append(stockList.get(i).get(1)).append(":").append(stockList.get(i).get(2)).append("\n");
         }
         return sb.toString();
     }

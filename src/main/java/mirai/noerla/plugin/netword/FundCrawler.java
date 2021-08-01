@@ -62,4 +62,20 @@ public class FundCrawler {
             throw new RuntimeException();
         }
     }
+
+    /**
+     * 获得基金持仓列表
+     * @param code
+     * @return
+     */
+    public JSONObject getPosition (String code) {
+        try {
+            String url = "https://api.doctorxiong.club/v1/fund/position?code=" + code;
+            String result = HttpUtil.get(url);
+            return new JSONObject(result);
+        } catch (Exception e) {
+            JavaPluginMain.INSTANCE.getLogger().error("第三方接口调用异常");
+            throw new RuntimeException();
+        }
+    }
 }

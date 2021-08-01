@@ -14,6 +14,10 @@
 * 格式：.基金 <基金编号>
 * 返回示例
   ![image](https://github.com/NoErla/fund-helper/blob/master/src/main/resources/image/detail.png)
+### .持仓
+
+* 功能：查看基金持仓
+* 格式：.持仓 <基金编号>
 ### .添加自选
 
 * 功能：记录自选基金
