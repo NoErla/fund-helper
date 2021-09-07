@@ -62,4 +62,19 @@ public class FundCrawler {
             throw new RuntimeException();
         }
     }
+
+    /**
+     * 查询基金排名
+     * @return
+     */
+    public JSONObject getFundsRank () {
+        try {
+            String url = "https://api.doctorxiong.club/v1/fund/rank";
+            String result = HttpUtil.post(url, "{\"sort\":\"z\"}");
+            return new JSONObject(result);
+        } catch (Exception e) {
+            JavaPluginMain.INSTANCE.getLogger().error("第三方接口调用异常");
+            throw new RuntimeException();
+        }
+    }
 }
