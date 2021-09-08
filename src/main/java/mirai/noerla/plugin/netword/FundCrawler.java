@@ -64,14 +64,13 @@ public class FundCrawler {
     }
 
     /**
-     * 获得基金持仓列表
-     * @param code
+     * 查询基金排名
      * @return
      */
-    public JSONObject getPosition (String code) {
+    public JSONObject getFundsRank () {
         try {
-            String url = "https://api.doctorxiong.club/v1/fund/position?code=" + code;
-            String result = HttpUtil.get(url);
+            String url = "https://api.doctorxiong.club/v1/fund/rank";
+            String result = HttpUtil.post(url, "{\"sort\":\"z\"}");
             return new JSONObject(result);
         } catch (Exception e) {
             JavaPluginMain.INSTANCE.getLogger().error("第三方接口调用异常");

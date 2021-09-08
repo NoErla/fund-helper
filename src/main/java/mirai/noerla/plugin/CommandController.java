@@ -77,6 +77,20 @@ public class CommandController {
         return sb.toString();
     }
 
+    //TODO 多命令优化
+    @MiraiCommand(value = ".jj", description = "查询登记的基金情况，格式: .我的基金")
+    public String myFundAnother(String id){
+        Optional<User> query = fundDao.query(id);
+        //如果用户为空则抛出异常
+        User user = query.orElseThrow(RuntimeException::new);
+        StringBuilder sb = new StringBuilder();
+        List<JSONObject> funds = fundCrawler.getFunds(user.getFundList().toArray(new String[0])).getJSONArray("data").toList(JSONObject.class);
+        for (JSONObject fund : funds){
+            sb.append(fund.getStr("name")).append("(").append(fund.getStr("code")).append(")").append(": ").append(fund.getStr("expectGrowth")).append("\n");
+        }
+        return sb.toString();
+    }
+
     @MiraiCommand(value = ".添加自选", description = "登记基金，格式: .添加自选 <code1>,<code2>")
     public String saveFund(String code, String id){
         List<String> fundList = Arrays.stream(code.split(",")).collect(Collectors.toList());
@@ -97,7 +111,7 @@ public class CommandController {
         return "添加成功";
     }
 
-    @MiraiCommand(value = ".删除自选", description = "删除自己登记的所有记录，格式: .删除自选")
+    @MiraiCommand(value = ".删除自选", description = "删除基金记录，格式: .删除自选 <code1>")
     public String deleteFund(String id){
         fundDao.delete(id);
         return "删除成功";
@@ -112,13 +126,13 @@ public class CommandController {
         return sb.toString();
     }
 
-    @MiraiCommand(value = ".持仓", description = "查看基金持仓，格式：.持仓 <code>")
-    public String position(String code){
-        JSONObject fund = fundCrawler.getPosition(code).getJSONObject("data");
-        List<JSONArray> stockList = fund.getJSONArray("stockList").toList(JSONArray.class);
+    @MiraiCommand(value = ".基金排名", description = "查看一周内基金排名，格式: .基金排名")
+    public String test(){
         StringBuilder sb = new StringBuilder();
-        for (int i=0,len=stockList.size();i<len;i++){
-            sb.append(stockList.get(i).get(1)).append(":").append(stockList.get(i).get(2)).append("\n");
+        JSONArray fundsRank = fundCrawler.getFundsRank().getJSONObject("data").getJSONArray("rank");
+        List<JSONObject> arrayLists = fundsRank.toList(JSONObject.class);
+        for (JSONObject fund : arrayLists){
+            sb.append(fund.getStr("name")).append("(").append(fund.getStr("code")).append(")").append(": ").append(fund.getStr("lastWeekGrowth")).append("\n");
         }
         return sb.toString();
     }
