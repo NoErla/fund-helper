@@ -99,7 +99,7 @@ public class FundHelperEventHandler extends SimpleListenerHost {
             //反射执行方法
             String result = method.invoke(getInstance.invoke(clazz), (Object[]) parameters).toString();
             String[] results = result.split("\n");
-            //fixme 基金信息只有一行的话不显示图片。因为显示问题暂时关闭图片显示
+            //fixme 基金信息只有一行的话不显示图片
 //            if (results.length > 1){
 //                createTableImage(results, messageEvent);
 //            } else

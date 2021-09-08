@@ -78,7 +78,7 @@ public class CommandController {
     }
 
     //TODO 多命令优化
-    @MiraiCommand(value = ".jj", description = "查询登记的基金情况，格式: .我的基金")
+    @MiraiCommand(value = ".jj", description = "查询登记的基金情况，格式: .jj")
     public String myFundAnother(String id){
         Optional<User> query = fundDao.query(id);
         //如果用户为空则抛出异常
@@ -112,8 +112,10 @@ public class CommandController {
     }
 
     @MiraiCommand(value = ".删除自选", description = "删除基金记录，格式: .删除自选 <code1>")
-    public String deleteFund(String id){
-        fundDao.delete(id);
+    public String deleteFund(String code, String id){
+        List<String> fundList = Arrays.stream(code.split(",")).collect(Collectors.toList());
+        Optional<User> query = fundDao.query(id);
+        fundDao.delete(query.get(), code);
         return "删除成功";
     }
 

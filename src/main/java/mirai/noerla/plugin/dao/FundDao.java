@@ -42,16 +42,13 @@ public class FundDao {
         writer.writeBeans(users);
     }
 
-    public void delete(String id){
+    public void delete(User user, String code){
         List<User> users = getAllUsers();
-        Optional<User> first = users.stream().filter(user -> id.equals(user.getId())).findFirst();
-        first.ifPresent(user -> {
-            users.remove(user);
-            //防止删除最后一个用户的时候连表头一起删除
-            //TODO 固定用户信息
-            if (users.isEmpty()){
-                users.add(new User());
-            }
+        Optional<User> first = users.stream().filter(u -> user.getId().equals(u.getId())).findFirst();
+        first.ifPresent(u -> {
+            boolean flag = u.getFundList().remove(code);
+            if (!flag)
+                throw new RuntimeException();
             CsvWriter writer = CsvUtil.getWriter(PluginConsts.CSV_PATH, CharsetUtil.CHARSET_UTF_8,false);
             writer.writeBeans(users);
         });

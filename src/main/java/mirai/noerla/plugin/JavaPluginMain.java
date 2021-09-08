@@ -62,7 +62,7 @@ public final class JavaPluginMain extends JavaPlugin {
             Trigger trigger = TriggerBuilder.newTrigger()
                     .startNow()//立即生效
                     //.withSchedule(simpleScheduleBuilder)
-                    .withSchedule(CronScheduleBuilder.cronSchedule("0 40 14 ? * 1-5 *"))
+                    .withSchedule(CronScheduleBuilder.cronSchedule("0 40 14 ? * 2-6 *"))
                     .build();//一直执行
             //4、执行
             scheduler.scheduleJob(jobDetail, trigger);
