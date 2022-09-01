@@ -65,8 +65,9 @@ public final class JavaPluginMain extends JavaPlugin {
                     .withSchedule(CronScheduleBuilder.cronSchedule("0 40 14 ? * 2-6 *"))
                     .build();//一直执行
             //4、执行
-            scheduler.scheduleJob(jobDetail, trigger);
-            scheduler.start();
+            //todo 关闭推送功能
+//            scheduler.scheduleJob(jobDetail, trigger);
+//            scheduler.start();
         } catch (Exception e) {
             getLogger().error("定时任务开启失败");
         }

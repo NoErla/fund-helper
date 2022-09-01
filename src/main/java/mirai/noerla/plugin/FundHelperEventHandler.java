@@ -32,19 +32,6 @@ public class FundHelperEventHandler extends SimpleListenerHost {
         this.commands = JavaPluginMain.commandMethod.keySet();
     }
 
-    @EventHandler
-    public ListeningStatus onBotGroupRequest(BotInvitedJoinGroupRequestEvent event) {
-        //收到邀请自动加入
-        event.accept();
-        return ListeningStatus.LISTENING;
-    }
-
-    @EventHandler
-    public ListeningStatus onFriendRequest(NewFriendRequestEvent event) {
-        event.accept();
-        return ListeningStatus.LISTENING;
-    }
-
     /**
      * 监听群临时会话消息
      *
