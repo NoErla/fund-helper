@@ -28,27 +28,6 @@ public class CommandController {
         return instance;
     }
 
-    @MiraiCommand(value = ".今日板块", description = "查询今日板块情况（维护中），格式: .今日板块")
-    public String dailyIndustry(){
-        JSONObject industry = fundCrawler.getIndustry();
-        JSONArray data = industry.getJSONArray("data");
-        List<JSONObject> arrayLists = data.toList(JSONObject.class);
-        //排序
-        arrayLists.sort(Comparator.comparingDouble(x -> x.getDouble("changePercent")));
-        StringBuilder sb = new StringBuilder();
-        sb.append("领涨行业：").append("\n");
-        sb.append(arrayLists.get(arrayLists.size() - 1).getStr("name")).append(":").append(arrayLists.get(arrayLists.size() - 1).getStr("changePercent")).append("\n");
-        sb.append(arrayLists.get(arrayLists.size() - 2).getStr("name")).append(":").append(arrayLists.get(arrayLists.size() - 2).getStr("changePercent")).append("\n");
-        sb.append(arrayLists.get(arrayLists.size() - 3).getStr("name")).append(":").append(arrayLists.get(arrayLists.size() - 3).getStr("changePercent")).append("\n");
-
-        sb.append("领跌行业：").append("\n");
-
-        sb.append(arrayLists.get(0).getStr("name")).append(":").append(arrayLists.get(0).getStr("changePercent")).append("\n");
-        sb.append(arrayLists.get(1).getStr("name")).append(":").append(arrayLists.get(1).getStr("changePercent")).append("\n");
-        sb.append(arrayLists.get(2).getStr("name")).append(":").append(arrayLists.get(2).getStr("changePercent"));
-        return sb.toString();
-    }
-
     @MiraiCommand(value = ".基金", description = "查询指定基金详情，格式: .基金 <code>")
     public String fund(String code){
         JSONObject fund = fundCrawler.getFund(code).getJSONArray("data").toList(JSONObject.class).get(0);
@@ -80,15 +59,7 @@ public class CommandController {
     //TODO 多命令优化
     @MiraiCommand(value = ".jj", description = "查询登记的基金情况，格式: .jj")
     public String myFundAnother(String id){
-        Optional<User> query = fundDao.query(id);
-        //如果用户为空则抛出异常
-        User user = query.orElseThrow(RuntimeException::new);
-        StringBuilder sb = new StringBuilder();
-        List<JSONObject> funds = fundCrawler.getFunds(user.getFundList().toArray(new String[0])).getJSONArray("data").toList(JSONObject.class);
-        for (JSONObject fund : funds){
-            sb.append(fund.getStr("name")).append("(").append(fund.getStr("code")).append(")").append(": ").append(fund.getStr("expectGrowth")).append("\n");
-        }
-        return sb.toString();
+        return myFund(id);
     }
 
     @MiraiCommand(value = ".添加自选", description = "登记基金，格式: .添加自选 <code1>,<code2>")

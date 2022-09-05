@@ -8,6 +8,7 @@ import cn.hutool.core.util.CharsetUtil;
 import mirai.noerla.plugin.annotation.MiraiCommand;
 import mirai.noerla.plugin.pojo.User;
 import mirai.noerla.plugin.timer.FundJob;
+import mirai.noerla.steam_checker.config.Config;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
@@ -49,38 +50,39 @@ public final class JavaPluginMain extends JavaPlugin {
 
     private void initScheduler() {
         try {
-            getLogger().info("准备开启定时任务");
-            // 1、创建调度器Scheduler
-            SchedulerFactory schedulerFactory = new StdSchedulerFactory();
-            Scheduler scheduler = schedulerFactory.getScheduler();
-            // 2、创建JobDetail实例
-            JobDetail jobDetail = JobBuilder.newJob(FundJob.class).build();
-            // 3、构建Trigger实例,每周一到周五14:40执行一次
-//            SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.simpleSchedule();
-//            simpleScheduleBuilder.withIntervalInSeconds(3);
-//            simpleScheduleBuilder.withRepeatCount(5);
-            Trigger trigger = TriggerBuilder.newTrigger()
-                    .startNow()//立即生效
-                    //.withSchedule(simpleScheduleBuilder)
-                    .withSchedule(CronScheduleBuilder.cronSchedule("0 40 14 ? * 2-6 *"))
-                    .build();//一直执行
-            //4、执行
-            //todo 关闭推送功能
-//            scheduler.scheduleJob(jobDetail, trigger);
-//            scheduler.start();
+            if (Config.INSTANCE.isPublish()) {
+                getLogger().info("准备开启定时任务");
+                // 1、创建调度器Scheduler
+                SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+                Scheduler scheduler = schedulerFactory.getScheduler();
+                // 2、创建JobDetail实例
+                JobDetail jobDetail = JobBuilder.newJob(FundJob.class).build();
+                // 3、构建Trigger实例,每周一到周五14:40执行一次
+                SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.simpleSchedule();
+                simpleScheduleBuilder.withIntervalInSeconds(3);
+                simpleScheduleBuilder.withRepeatCount(5);
+                Trigger trigger = TriggerBuilder.newTrigger()
+                        .startNow()//立即生效
+                        //.withSchedule(simpleScheduleBuilder)
+                        .withSchedule(CronScheduleBuilder.cronSchedule(Config.INSTANCE.getTimer()))
+                        .build();//一直执行
+                //4、执行
+                scheduler.scheduleJob(jobDetail, trigger);
+                scheduler.start();
+            }
         } catch (Exception e) {
             getLogger().error("定时任务开启失败");
         }
     }
 
-    private void initCsvFile(){
-        try{
+    private void initCsvFile() {
+        try {
             //判断是否存在csv文件
-            if (!FileUtil.exist(PluginConsts.CSV_PATH)){
+            if (!FileUtil.exist(PluginConsts.CSV_PATH)) {
                 //创建data.csv文件
                 CsvWriter writer = CsvUtil.getWriter(PluginConsts.CSV_PATH, CharsetUtil.CHARSET_UTF_8);
                 //写出表头
-                Map<String, Object> properties  = BeanUtil.beanToMap(new User());
+                Map<String, Object> properties = BeanUtil.beanToMap(new User());
                 writer.writeLine(properties.keySet().toArray(new String[0]));
                 //初始用户
                 User initUser = new User();
@@ -89,13 +91,13 @@ public final class JavaPluginMain extends JavaPlugin {
                 writer.writeLine(initUser.getId(), initUser.getFundList().toString());
                 writer.flush();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             getLogger().error("csv文件初始化失败");
         }
 
     }
 
-    private void initMapUrlMethod(){
+    private void initMapUrlMethod() {
         //获取对应的类路径
         //TODO 取消硬编码
         String classurl = "mirai.noerla.plugin.CommandController";
@@ -103,11 +105,11 @@ public final class JavaPluginMain extends JavaPlugin {
         try {
             Class<?> c = Class.forName(classurl);
             //获得该类的所有方法对象
-            Method [] methods = c.getDeclaredMethods();
+            Method[] methods = c.getDeclaredMethods();
             //forEach 遍历方法对象
-            for(Method method : methods){
+            for (Method method : methods) {
                 //判断是不是UserCommand的注解
-                if (method.isAnnotationPresent(MiraiCommand.class)){
+                if (method.isAnnotationPresent(MiraiCommand.class)) {
                     //如果有存在就把该标签取出来
                     MiraiCommand xReqMap = method.getAnnotation(MiraiCommand.class);
                     //把方法和该方法对应的标签进行绑定

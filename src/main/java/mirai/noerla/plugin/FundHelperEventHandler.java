@@ -33,17 +33,6 @@ public class FundHelperEventHandler extends SimpleListenerHost {
     }
 
     /**
-     * 监听群临时会话消息
-     *
-     * @param event
-     * @return
-     */
-    @EventHandler
-    public ListeningStatus OnGroupTempMessageEvent(GroupTempMessageEvent event) {
-        return ListeningStatus.LISTENING;
-    }
-
-    /**
      * 监听好友
      *
      * @param event
@@ -85,12 +74,14 @@ public class FundHelperEventHandler extends SimpleListenerHost {
             String[] parameters = dataBinder(method, String.valueOf(messageEvent.getSender().getId()), inputs.length>=2 ? inputs[1] : null);
             //反射执行方法
             String result = method.invoke(getInstance.invoke(clazz), (Object[]) parameters).toString();
-            String[] results = result.split("\n");
-            //fixme 基金信息只有一行的话不显示图片
-//            if (results.length > 1){
+            String[] results = result.split(";;");
+            if (results.length > 1){
 //                createTableImage(results, messageEvent);
-//            } else
-            messageEvent.getSubject().sendMessage(result);
+                messageEvent.getSubject().sendMessage(results[0]);
+                messageEvent.getSubject().sendMessage(results[1]);
+            } else {
+                messageEvent.getSubject().sendMessage(result);
+            }
         } catch (Exception e){
             logger.error(e.getMessage());
             messageEvent.getSubject().sendMessage("错误");
