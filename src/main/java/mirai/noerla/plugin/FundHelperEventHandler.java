@@ -1,15 +1,20 @@
 package mirai.noerla.plugin;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.thoughtworks.paranamer.AnnotationParanamer;
 import com.thoughtworks.paranamer.BytecodeReadingParanamer;
 import com.thoughtworks.paranamer.CachingParanamer;
 import com.thoughtworks.paranamer.Paranamer;
+import net.mamoe.mirai.console.MiraiConsole;
+import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.ListeningStatus;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.*;
 import net.mamoe.mirai.utils.ExternalResource;
 import net.mamoe.mirai.utils.MiraiLogger;
+import org.junit.Test;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -19,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.Random;
 import java.util.Set;
 
 public class FundHelperEventHandler extends SimpleListenerHost {
@@ -71,20 +77,13 @@ public class FundHelperEventHandler extends SimpleListenerHost {
             Method getInstance = clazz.getMethod("getInstance");
             //获得方法参数
             //TODO 目前只有String类型的入参，之后可以改为支持其他类型
-            String[] parameters = dataBinder(method, String.valueOf(messageEvent.getSender().getId()), inputs.length>=2 ? inputs[1] : null);
+            Object[] parameters = dataBinder(method, String.valueOf(messageEvent.getSender().getId()), inputs.length>=2 ? inputs[1] : null , messageEvent);
             //反射执行方法
-            String result = method.invoke(getInstance.invoke(clazz), (Object[]) parameters).toString();
-            String[] results = result.split(";;");
-            if (results.length > 1){
-//                createTableImage(results, messageEvent);
-                messageEvent.getSubject().sendMessage(results[0]);
-                messageEvent.getSubject().sendMessage(results[1]);
-            } else {
-                messageEvent.getSubject().sendMessage(result);
-            }
+            String result = method.invoke(getInstance.invoke(clazz), parameters).toString();
+            messageEvent.getSubject().sendMessage(result);
         } catch (Exception e){
             logger.error(e.getMessage());
-            messageEvent.getSubject().sendMessage("错误");
+            messageEvent.getSubject().sendMessage(Contact.uploadImage(messageEvent.getSubject(), FileUtil.file(PluginConsts.ERROR_IMAGE_PATH)));
         }
     }
 
@@ -106,17 +105,25 @@ public class FundHelperEventHandler extends SimpleListenerHost {
                 .anyMatch(str::startsWith);
     }
 
-    private String[] dataBinder(Method method, String id, String code){
+    private Object[] dataBinder(Method method, String id, String code, MessageEvent messageEvent){
         Paranamer info = new CachingParanamer(new AnnotationParanamer(new BytecodeReadingParanamer()));
         String[] parameterNames = info.lookupParameterNames(method);
-        String[] parameters = new String[method.getParameterCount()];
+        Object[] parameters = new Object[method.getParameterCount()];
         for (int i=0,len=method.getParameterCount();i<len;i++){
-            if (parameterNames[i].equals("id"))
-                parameters[i] = id;
-            else if (parameterNames[i].equals("code"))
-                parameters[i] = code;
-            else
-                parameters[i] = null;
+            switch (parameterNames[i]) {
+                case "id":
+                    parameters[i] = id;
+                    break;
+                case "code":
+                    parameters[i] = code;
+                    break;
+                case "messageEvent":
+                    parameters[i] = messageEvent;
+                    break;
+                default:
+                    parameters[i] = null;
+                    break;
+            }
         }
         return parameters;
     }

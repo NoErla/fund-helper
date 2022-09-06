@@ -1,11 +1,15 @@
 package mirai.noerla.plugin;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import mirai.noerla.plugin.annotation.MiraiCommand;
 import mirai.noerla.plugin.dao.FundDao;
 import mirai.noerla.plugin.netword.FundCrawler;
 import mirai.noerla.plugin.pojo.User;
+import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.event.events.MessageEvent;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,22 +48,36 @@ public class CommandController {
     }
 
     @MiraiCommand(value = ".我的基金", description = "查询登记的基金情况，格式: .我的基金")
-    public String myFund(String id){
+    public String myFund(String id, MessageEvent messageEvent){
         Optional<User> query = fundDao.query(id);
         //如果用户为空则抛出异常
         User user = query.orElseThrow(RuntimeException::new);
         StringBuilder sb = new StringBuilder();
         List<JSONObject> funds = fundCrawler.getFunds(user.getFundList().toArray(new String[0])).getJSONArray("data").toList(JSONObject.class);
+        Double total = 0.0;
         for (JSONObject fund : funds){
             sb.append(fund.getStr("name")).append("(").append(fund.getStr("code")).append(")").append(": ").append(fund.getStr("expectGrowth")).append("\n");
+            Double single;
+            try {
+                single = Double.valueOf(fund.getStr("expectGrowth"));
+            } catch (Exception e) {
+                single = 0.0;
+            }
+            total += single;
+        }
+        final int i = RandomUtil.randomInt(1, 4);
+        if (total <= 0) {
+            messageEvent.getSubject().sendMessage(Contact.uploadImage(messageEvent.getSubject(), FileUtil.file(PluginConsts.BAD + i + ".jpg")));
+        } else {
+            messageEvent.getSubject().sendMessage(Contact.uploadImage(messageEvent.getSubject(), FileUtil.file(PluginConsts.GOOD + i + ".jpg")));
         }
         return sb.toString();
     }
 
     //TODO 多命令优化
     @MiraiCommand(value = ".jj", description = "查询登记的基金情况，格式: .jj")
-    public String myFundAnother(String id){
-        return myFund(id);
+    public String myFundAnother(String id, MessageEvent messageEvent){
+        return myFund(id, messageEvent);
     }
 
     @MiraiCommand(value = ".添加自选", description = "登记基金，格式: .添加自选 <code1>,<code2>")

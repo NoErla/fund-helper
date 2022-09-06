@@ -37,7 +37,8 @@ public class FundJob implements Job {
         for (User user : users){
             if (instance.getFriend(Long.parseLong(user.getId())) != null){
                 JavaPluginMain.INSTANCE.getLogger().info("定时任务对象：" + user.getId());
-                String[] result = commandController.myFund(user.getId()).split("\n");
+                //fixme null→messageEvent
+                String[] result = commandController.myFund(user.getId(), null).split("\n");
                 try {
                     createTableImage(result, instance.getFriend(Long.parseLong(user.getId())));
                 } catch (IOException e) {
